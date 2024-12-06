@@ -1,0 +1,128 @@
+I'm sorry, can't delete this attempt
+
+// countObstacles := map[Position]int{}
+
+// path = map[Position]int{}
+// direction = Direction(0)
+// currentPosition = initialGuardPosition
+// path[initialGuardPosition] = 1
+
+// // part 2
+// for {
+// 	var nextPosition Position
+// 	if direction.Up() {
+// 		nextPosition = Position{L: currentPosition.L - 1, C: currentPosition.C}
+// 	} else if direction.Right() {
+// 		nextPosition = Position{L: currentPosition.L, C: currentPosition.C + 1}
+// 	} else if direction.Down() {
+// 		nextPosition = Position{L: currentPosition.L + 1, C: currentPosition.C}
+// 	} else if direction.Left() {
+// 		nextPosition = Position{L: currentPosition.L, C: currentPosition.C - 1}
+// 	}
+
+// 	// finished
+// 	if nextPosition.L < 0 || nextPosition.C < 0 || nextPosition.L >= maxL || nextPosition.C >= maxC {
+// 		break
+// 	}
+
+// 	// looool
+// 	if gameMap[nextPosition.L][nextPosition.C] == obstacle {
+// 		if direction.Up() {
+// 			for j := nextPosition.C; j < maxC; j++ {
+// 				if gameMap[nextPosition.L+1][j] == obstacle {
+// 					for i := 0; i < nextPosition.L; i++ {
+// 						if gameMap[i][nextPosition.C-1] == obstacle {
+// 							p := Position{L: i + 1, C: j - 1}
+// 							fmt.Printf("(UP): %v\n", p)
+
+// 							if _, ok := countObstacles[p]; ok {
+// 								countObstacles[p]++
+// 							} else {
+// 								countObstacles[p] = 1
+// 							}
+
+// 						}
+// 					}
+
+// 				}
+// 			}
+// 		}
+
+// 		if direction.Right() {
+// 			for j := 0; j < nextPosition.C; j++ {
+// 				if gameMap[nextPosition.L-1][j] == obstacle {
+// 					for i := 0; i < maxL; i++ {
+// 						if gameMap[i][nextPosition.C-1] == obstacle {
+// 							p := Position{L: i - 1, C: j - 1}
+// 							fmt.Printf("(RIGHT): %v\n", p)
+
+// 							if _, ok := countObstacles[p]; ok {
+// 								countObstacles[p]++
+// 							} else {
+// 								countObstacles[p] = 1
+// 							}
+
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
+
+// 		if direction.Down() {
+// 			for j := 0; j < nextPosition.C; j++ {
+// 				if gameMap[nextPosition.L-1][j] == obstacle {
+// 					for i := 0; i < nextPosition.L; i++ {
+// 						if gameMap[i][nextPosition.C+1] == obstacle {
+// 							p := Position{L: i - 1, C: j + 1}
+// 							fmt.Printf("(DOWN): %v\n", p)
+
+// 							if _, ok := countObstacles[p]; ok {
+// 								countObstacles[p]++
+// 							} else {
+// 								countObstacles[p] = 1
+// 							}
+
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
+
+// 		if direction.Left() {
+// 			for j := nextPosition.C; j < maxC; j++ {
+// 				if gameMap[nextPosition.L+1][j] == obstacle {
+// 					for i := 0; i < nextPosition.L; i++ {
+// 						if gameMap[i][nextPosition.C+1] == obstacle {
+// 							p := Position{L: i + 1, C: j + 1}
+// 							fmt.Printf("(LEFT): %v\n", p)
+
+// 							if _, ok := countObstacles[p]; ok {
+// 								countObstacles[p]++
+// 							} else {
+// 								countObstacles[p] = 1
+// 							}
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
+
+// 		direction = direction.Turn()
+// 		continue
+// 	}
+
+// 	currentPosition = nextPosition
+// 	if _, ok := path[nextPosition]; ok {
+// 		path[nextPosition]++
+// 	} else {
+// 		path[nextPosition] = 1
+// 	}
+// }
+
+// delete(countObstacles, initialGuardPosition)
+
+// for p := range countObstacles {
+// 	fmt.Printf("p: %v\n", p)
+// }
+
+// count2 := len(countObstacles)
