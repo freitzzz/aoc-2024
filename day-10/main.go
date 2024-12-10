@@ -50,20 +50,24 @@ func main() {
 		i++
 	}
 
-	println(part1(topoMap, trailheads))
+	scoreSum, scoreRating := part1and2(topoMap, trailheads)
+	println(scoreSum)
+	println(scoreRating)
 }
 
-func part1(topoMap [][]int, trailheads [][2]int) int {
+func part1and2(topoMap [][]int, trailheads [][2]int) (int, int) {
 	score := map[int]int{}
 
 	maxx := len(topoMap)
 	maxy := len(topoMap[0])
+
+	count := 0
+
 	for i, th := range trailheads {
 		x := th[0]
 		y := th[1]
 
 		highestCheckpoint := map[[2]int]any{}
-		count := 0
 		checkpoints := [][2]int{th}
 		for {
 			if len(checkpoints) == 0 {
@@ -112,7 +116,7 @@ func part1(topoMap [][]int, trailheads [][2]int) int {
 		sum += sc
 	}
 
-	return sum
+	return sum, count
 }
 
 func mustInt(b byte) int {
