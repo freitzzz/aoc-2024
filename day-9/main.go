@@ -54,10 +54,11 @@ func main() {
 		blocks = append(blocks, bs...)
 	}
 
-	chks := part1(blocks)
-	chks2 := part2(blocks)
-	println(chks)
-	println(chks2)
+	// chks := part1(blocks)
+	// chks2 := part2(blocks)
+	// println(chks)
+	// println(chks2)
+	println(part2R(blocks))
 }
 
 func part1(blocks []int) int {
@@ -90,6 +91,61 @@ func part1(blocks []int) int {
 	}
 
 	for i := 0; i < len(rblocks)-oob; i++ {
+		chks += i * rblocks[i]
+	}
+
+	return chks
+}
+
+func part2R(blocks []int) int {
+	rblocks := copyArray(blocks)
+
+	acc := []int{} //block of the files that we want to move to the free space (if there is any)
+	for i := len(blocks) - 1; i >= 0; i-- {
+		bf := blocks[i]
+
+		if bf != -1 && len(acc) == 0 {
+			// first element
+			acc = append(acc, bf)
+			continue
+		}
+
+		if bf != -1 && len(acc) > 0 && bf == acc[0] {
+			// other elements equal to the first in the acc
+			acc = append(acc, bf)
+			continue
+		}
+
+		// We found all block file of the same group
+		// Now we search for the free space
+		fs := 0
+		fgsize := len(acc)
+		for j := 0; j < i; j++ {
+			if fs > 0 && fs == fgsize {
+				rblocks = changeArray(rblocks, j-fs, j, acc)
+				rblocks = changeArray(rblocks, i+1, i+1+fgsize, repeat(-1, fgsize))
+				break
+			}
+			if rblocks[j] == -1 {
+				fs++
+				continue
+			}
+			if rblocks[j] != -1 && fs > 0 {
+				fs = 0
+			}
+		}
+
+		acc = []int{}
+		if bf != -1 {
+			acc = append(acc, bf)
+		}
+	}
+
+	chks := 0
+	for i := 0; i < len(rblocks); i++ {
+		if rblocks[i] == -1 {
+			continue
+		}
 		chks += i * rblocks[i]
 	}
 
@@ -131,6 +187,7 @@ func part2(blocks []int) int {
 
 		if bf != -1 && sc == 0 {
 			rblocks = append(rblocks, bf)
+			fmt.Printf("rblocks: %v\n", rblocks)
 			continue
 		}
 
@@ -142,12 +199,16 @@ func part2(blocks []int) int {
 
 				xxx := [][]int{}
 				for _, lbf := range lastBlocks {
+					fmt.Printf("lbf: %v\n", lbf)
+					fmt.Printf("bff: %v\n", bff)
 					if !slices.Equal(bff, lbf) {
 						xxx = append(xxx, lbf)
 					}
 				}
 
 				lastBlocks = xxx
+				fmt.Printf("lastBlocks: %v\n", lastBlocks)
+				println()
 				break
 			}
 		}
@@ -155,11 +216,13 @@ func part2(blocks []int) int {
 		if bff == nil || len(bff) == 0 {
 			for i := 0; i < sc; i++ {
 				rblocks = append(rblocks, -1)
+				fmt.Printf("rblocks: %v\n", rblocks)
 			}
 
 			sc = 0
 		} else {
 			rblocks = append(rblocks, bff...)
+			fmt.Printf("rblocks: %v\n", rblocks)
 			for j := i + len(bff); j < len(blocks); j++ {
 				if blocks[j] == bff[0] {
 					blocks[j] = -2
@@ -204,4 +267,29 @@ func repeat(d int, c int) []int {
 	}
 
 	return r
+}
+
+func changeArray(src []int, init int, end int, values []int) []int {
+	r := []int{}
+	j := 0
+
+	for i := 0; i < len(src); i++ {
+		if i < init || i >= end {
+			r = append(r, src[i])
+			continue
+		}
+
+		r = append(r, values[j])
+		j++
+	}
+	return r
+}
+
+func copyArray(src []int) []int {
+	l := len(src)
+	destination := []int{}
+	for i := 0; i < l; i++ {
+		destination = append(destination, src[i])
+	}
+	return destination
 }
