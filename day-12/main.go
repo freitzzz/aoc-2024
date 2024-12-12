@@ -59,6 +59,7 @@ func main() {
 	}
 
 	println(part1(plots))
+	println(part2(plots))
 }
 
 func part1(plots map[rune][]Region) int {
@@ -66,6 +67,17 @@ func part1(plots map[rune][]Region) int {
 	for _, rs := range plots {
 		for _, r := range rs {
 			sum += r.Price()
+		}
+	}
+
+	return sum
+}
+
+func part2(plots map[rune][]Region) int {
+	sum := 0
+	for _, rs := range plots {
+		for _, r := range rs {
+			sum += r.Price2()
 		}
 	}
 
@@ -182,6 +194,76 @@ func (r Region) Perimeter() int {
 	return sum
 }
 
+func (r Region) Sides() int {
+	sum := 0
+
+	pcache := map[[2]int]any{}
+	for _, p := range r.Positions {
+		pcache[p] = nil
+	}
+
+	for _, p := range r.Positions {
+		l := p[0]
+		c := p[1]
+
+		_, lok := pcache[[2]int{l, c - 1}]
+		_, rok := pcache[[2]int{l, c + 1}]
+		_, uok := pcache[[2]int{l - 1, c}]
+		_, dok := pcache[[2]int{l + 1, c}]
+
+		_, iulok := pcache[[2]int{l - 1, c - 1}]
+		_, iurok := pcache[[2]int{l - 1, c + 1}]
+		_, idlok := pcache[[2]int{l + 1, c - 1}]
+		_, idrok := pcache[[2]int{l + 1, c + 1}]
+
+		// top-left corner
+		if !lok && !uok {
+			sum++
+		}
+
+		// top-right corner
+		if !rok && !uok {
+			sum++
+		}
+
+		// bottom-right corner
+		if !dok && !rok {
+			sum++
+		}
+
+		// bottom-left corner
+		if !dok && !lok {
+			sum++
+		}
+
+		// top-inner-left corner
+		if !uok && iulok && lok {
+			sum++
+		}
+
+		// top-inner-right corner
+		if !uok && iurok && rok {
+			sum++
+		}
+
+		// bottom-inner-right corner
+		if !dok && idrok && rok {
+			sum++
+		}
+
+		// bottom-inner-left corner
+		if !dok && idlok && lok {
+			sum++
+		}
+	}
+
+	return sum
+}
+
 func (r Region) Price() int {
 	return r.Area() * r.Perimeter()
+}
+
+func (r Region) Price2() int {
+	return r.Area() * r.Sides()
 }
