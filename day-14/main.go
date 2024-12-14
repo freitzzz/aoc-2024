@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 
@@ -45,6 +46,7 @@ func main() {
 	}
 
 	println(part1(robots))
+	println(part2(robots))
 }
 
 func part1(robots []Robot) int {
@@ -114,6 +116,65 @@ func part1(robots []Robot) int {
 	}
 
 	return factor
+}
+
+func part2(robots []Robot) string {
+	positions := [][2]int{}
+	f, err := os.CreateTemp("", "")
+	if err != nil {
+		panic(err)
+	}
+
+	for i := 1; i <= 8000; i++ {
+		for _, r := range robots {
+			p := r.FinalPosition(i)
+
+			for {
+				if p[0] >= 0 && p[0] < map_size[0] && p[1] >= 0 && p[1] < map_size[1] {
+					break
+				}
+
+				if p[0] >= map_size[0] {
+					p[0] = p[0] - map_size[0]
+				}
+
+				if p[0] < 0 {
+					p[0] = p[0] + map_size[0]
+				}
+
+				if p[1] >= map_size[1] {
+					p[1] = p[1] - map_size[1]
+				}
+
+				if p[1] < 0 {
+					p[1] = p[1] + map_size[1]
+				}
+			}
+
+			positions = append(positions, p)
+		}
+
+		tiles := [][]byte{}
+		f.Write([]byte(fmt.Sprintf("Second %d", i)))
+		for i := 0; i < map_size[1]; i++ {
+			tiles = append(tiles, []byte{})
+			for j := 0; j < map_size[0]; j++ {
+				tiles[i] = append(tiles[i], '.')
+			}
+		}
+
+		for _, p := range positions {
+			tiles[p[1]][p[0]] = '*'
+		}
+
+		for i := range tiles {
+			f.Write(tiles[i])
+			f.Write([]byte("\n"))
+		}
+	}
+
+	f.Close()
+	return f.Name()
 }
 
 type Robot struct {
