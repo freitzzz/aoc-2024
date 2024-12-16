@@ -49,7 +49,7 @@ func main() {
 		maze.Map = append(maze.Map, []rune(t))
 	}
 
-	paths := allPaths(maze.Map, [][][2]int{}, [][2]int{maze.StartPosition}, maze.StartPosition[0], maze.StartPosition[1])
+	paths := allPaths(maze.Map, [][][2]int{}, [][2]int{maze.StartPosition}, [][2]int{maze.StartPosition}, maze.StartPosition[0], maze.StartPosition[1])
 	fmt.Printf("paths: %v\n", paths)
 }
 
@@ -144,8 +144,9 @@ func (m Maze) FindBestPath() [][2]int {
 	return bp
 }
 
-func allPaths(maze [][]rune, all [][][2]int, paths [][2]int, x, y int) [][][2]int {
+func allPaths(maze [][]rune, all [][][2]int, paths [][2]int, visited [][2]int, x, y int) [][][2]int {
 	if maze[x][y] == 'E' {
+		println("FINAL")
 		all = append(all, paths)
 		return all
 	}
@@ -155,36 +156,56 @@ func allPaths(maze [][]rune, all [][][2]int, paths [][2]int, x, y int) [][][2]in
 
 	// right
 	if y+1 < maxy && maze[x][y+1] != '#' {
-		if !contains(paths, [2]int{x, y + 1}) {
+		if !contains(visited, [2]int{x, y + 1}) {
+			println("right")
 			paths = append(paths, [2]int{x, y + 1})
-			return allPaths(maze, all, paths, x, y+1)
+			visited = append(visited, [2]int{x, y + 1})
+			all = allPaths(maze, all, paths, visited, x, y+1)
 		}
 	}
 
 	// left
 	if y-1 >= 0 && maze[x][y-1] != '#' {
-		if !contains(paths, [2]int{x, y - 1}) {
+		if !contains(visited, [2]int{x, y - 1}) {
+			println("left")
 			paths = append(paths, [2]int{x, y - 1})
-			return allPaths(maze, all, paths, x, y-1)
+			visited = append(visited, [2]int{x, y - 1})
+			all = allPaths(maze, all, paths, visited, x, y-1)
 		}
 	}
 
 	// up
 	if x-1 >= 0 && maze[x-1][y] != '#' {
-		if !contains(paths, [2]int{x - 1, y}) {
+		if !contains(visited, [2]int{x - 1, y}) {
+			println("up")
 			paths = append(paths, [2]int{x - 1, y})
-			return allPaths(maze, all, paths, x-1, y)
+			visited = append(visited, [2]int{x - 1, y})
+			all = allPaths(maze, all, paths, visited, x-1, y)
 		}
 	}
 
 	// down
 	if x+1 < maxx && maze[x+1][y] != '#' {
-		if !contains(paths, [2]int{x + 1, y}) {
+		if !contains(visited, [2]int{x + 1, y}) {
+			println("down")
 			paths = append(paths, [2]int{x + 1, y})
-			return allPaths(maze, all, paths, x+1, y)
+			visited = append(visited, [2]int{x + 1, y})
+			all = allPaths(maze, all, paths, visited, x+1, y)
 		}
 	}
 
+	
+	fmt.Printf("paths: %v\n", paths)
+	lastP := paths[len(paths)-2]
+	fmt.Printf("lastP: %v\n", lastP)
+	// return allPaths(
+	// 	maze,
+	// 	all,
+	// 	paths[0:len(paths)-1],
+	// 	visited,
+	// 	lastP[0],
+	// 	lastP[1],
+	// )
 	return all
 }
 
