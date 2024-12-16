@@ -50,7 +50,68 @@ func main() {
 	}
 
 	paths := allPaths(maze.Map, [][][2]int{}, [][2]int{maze.StartPosition}, [][2]int{maze.StartPosition}, maze.StartPosition[0], maze.StartPosition[1])
-	fmt.Printf("paths: %v\n", paths)
+	paths2 := [][][2]int{}
+	for _, p := range paths {
+		if p[len(p)-1] == maze.EndPosition {
+			paths2 = append(paths2, p)
+		}
+	}
+
+	fmt.Printf("len(paths2): %v\n", len(paths2))
+
+	println(part1(paths2))
+}
+
+func part1(paths [][][2]int) int {
+	lowestScore := 999999999999999999
+	for _, path := range paths {
+		score := 0
+		direction := -1
+		lp := path[0]
+
+		for _, p := range path {
+			vx := p[0] - lp[0]
+			vy := p[1] - lp[1]
+
+			var d int
+			if vx < 0 {
+				// down
+				d = 0
+			} else if vx > 0 {
+				// up
+				d = 1
+			} else if vy < 0 {
+				// left
+				d = 2
+			} else if vy > 0 {
+				// right
+				d = 3
+			} else {
+				d = -1
+			}
+
+			if direction == -1 {
+				direction = d
+			} else if direction == d {
+				score += 1
+			} else {
+				score += 1000
+				direction = d
+			}
+
+			lp = p
+		}
+
+		if score < lowestScore {
+			lowestScore = score
+		}
+
+		if score == 9028 {
+			fmt.Printf("path: %v\n", path)
+		}
+	}
+
+	return lowestScore
 }
 
 type Maze struct {
@@ -194,7 +255,6 @@ func allPaths(maze [][]rune, all [][][2]int, paths [][2]int, visited [][2]int, x
 		}
 	}
 
-	
 	fmt.Printf("paths: %v\n", paths)
 	lastP := paths[len(paths)-2]
 	fmt.Printf("lastP: %v\n", lastP)
