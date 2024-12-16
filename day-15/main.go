@@ -77,19 +77,9 @@ func main() {
 		l++
 	}
 
-	// println(warehouse.Simulate().BoxesGpsSum())
-	// println(warehouse.Resize().Simulate2().BoxesGpsSum2())
-	fmt.Printf("Initial Robot: %v\n", warehouse.Resize().Robot)
-	w := warehouse.Resize().Simulate2()
-	fmt.Printf("Robot: %v\n", w.Robot)
-	boxes := w.Boxes
-	for b := range boxes {
-		fmt.Printf("b: %v\n", b)
-	}
-	// walls := w.Walls
-	// for w := range walls {
-	// 	fmt.Printf("%v\n", w)
-	// }
+	rw := warehouse.Resize()
+	println(warehouse.Simulate().BoxesGpsSum())
+	println(rw.Simulate2().BoxesGpsSum())
 }
 
 type Warehouse struct {
@@ -198,6 +188,9 @@ func (w Warehouse) Simulate2() Warehouse {
 				w.Robot = p
 				continue
 			}
+		} else {
+			p2 = p
+			p2[1]++
 		}
 
 		if _, ok := w.Boxes[p]; ok {
