@@ -62,6 +62,10 @@ func main() {
 	// println(part1(paths2))
 
 	fmt.Printf("part1and2(maze): %v\n", part1(maze))
+	allPaths := part2(maze)
+	for _, p := range allPaths {
+		fmt.Printf("p: %v\n", len(p))
+	}
 
 	// println("oi1")
 	// tree := buildTree(maze.Map, maze.StartPosition)
@@ -420,6 +424,90 @@ func part1(maze Maze) int {
 	}
 
 	return -1
+}
+
+// type ASDF struct {
+// 	Path         [][2]int
+// 	X, Y, DX, DY int
+// }
+
+func part2(maze Maze) [][][2]int {
+	mazeMap := maze.Map
+	seen := map[[4]int]any{
+		{
+			maze.StartPosition[0],
+			maze.StartPosition[1],
+			0,
+			1,
+		}: nil,
+	}
+	heap := map[[5]int][][2]int{
+		{
+			0,
+			maze.StartPosition[0],
+			maze.StartPosition[1],
+			0,
+			1,
+		}: {},
+	}
+
+	popMin := func(heap map[[5]int][][2]int) ([5]int, [][2]int) {
+		var lk [5]int
+		var lv [][2]int
+		lowestV := 999999999999999999
+		for k, v := range heap {
+			if k[0] < lowestV {
+				lk = k
+				lowestV = k[0]
+				lv = v
+			}
+		}
+
+		delete(heap, lk)
+		return lk, lv
+	}
+
+	allPaths := [][][2]int{}
+
+	for {
+		if len(heap) == 0 {
+			break
+		}
+
+		p, path := popMin(heap)
+		cost := p[0]
+		x := p[1]
+		y := p[2]
+		dx := p[3]
+		dy := p[4]
+
+		if mazeMap[x][y] == 'E' {
+			allPaths = append(allPaths, path)
+			continue
+		}
+
+		tries := [][5]int{
+			{cost + 1, x + dx, y + dy, dx, dy},
+			{cost + 1000, x, y, dy, -dx},
+			{cost + 1000, x, y, -dy, dx},
+		}
+
+		for _, t := range tries {
+			if mazeMap[t[1]][t[2]] != '#' {
+				if _, ok := seen[[4]int{t[1], t[2], t[3], t[4]}]; !ok {
+					seen[[4]int{t[1], t[2], t[3], t[4]}] = nil
+
+					pathCopy := make([][2]int, len(path))
+					copy(pathCopy, path)
+					heap[t] = append(pathCopy, [2]int{t[1], t[2]})
+				}
+			}
+		}
+
+		// mazeMap[x][y] = '.'
+	}
+
+	return allPaths
 }
 
 func contains(checkpoints [][2]int, p [2]int) bool {
