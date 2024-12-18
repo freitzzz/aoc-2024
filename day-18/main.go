@@ -41,7 +41,8 @@ func main() {
 		positions = append(positions, p)
 	}
 
-	println(part1(positions[:1024], start, end))
+	println(part1(positions[:3033], start, end))
+	fmt.Printf("part2(positions, start, end): %v\n", part2(positions, start, end))
 }
 
 type Maze struct {
@@ -159,6 +160,26 @@ func part1(positions [][2]int, start [2]int, end [2]int) int {
 	}
 
 	return -1
+}
+
+func part2(positions [][2]int, start [2]int, end [2]int) [2]int {
+	var t int
+	for i := 1024; i < len(positions); i += 100 {
+		count := part1(positions[:i], start, end)
+		if count == -1 {
+			t = i
+			break
+		}
+	}
+
+	for i := t; i >= 1024; i-- {
+		count := part1(positions[:i], start, end)
+		if count != -1 {
+			return positions[i]
+		}
+	}
+
+	return [2]int{-1, -1}
 }
 
 func mustInt(s string) int {
